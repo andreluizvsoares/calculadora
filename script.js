@@ -8,6 +8,34 @@ class Calculator {
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
 
+    executeSpecialOperation(operation) {
+        const current = parseFloat(this.currentOperand);
+        if (isNaN(current)) return;
+
+        switch (operation) {
+            case '%':
+                this.currentOperand = (current / 100).toString();
+                break;
+            case '√':
+                if (current < 0) {
+                    alert('Não é possível calcular raiz quadrada de número negativo!');
+                    return;
+                }
+                this.currentOperand = Math.sqrt(current).toString();
+                break;
+            case 'x²':
+                this.currentOperand = (current * current).toString();
+                break;
+            case '1/x':
+                if (current === 0) {
+                    alert('Não é possível dividir por zero!');
+                    return;
+                }
+                this.currentOperand = (1 / current).toString();
+                break;
+        }
+    }
+
     clear() {
         this.currentOperand = '0';
         this.previousOperand = '';
@@ -106,12 +134,14 @@ class Calculator {
 
 const calculator = new Calculator();
 
-document.querySelectorAll('.number, .operator').forEach(button => {
+document.querySelectorAll('.number, .operator, .special').forEach(button => {
     button.addEventListener('click', () => {
         if (button.classList.contains('number')) {
             calculator.appendNumber(button.textContent);
-        } else {
+        } else if (button.classList.contains('operator')) {
             calculator.chooseOperation(button.textContent);
+        } else if (button.classList.contains('special')) {
+            calculator.executeSpecialOperation(button.textContent);
         }
         calculator.updateDisplay();
     });
